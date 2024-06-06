@@ -27,6 +27,8 @@ ssh $user@$host << EOF
     --restart=unless-stopped \
     canopi/vidchanalyzer:latest
 
+  docker network connect INTERNAL vidchanalyzer
+
   # Cleanup Files
   ls -l
   rm -rf ~/auto-deploy/*
