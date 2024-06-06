@@ -87,7 +87,7 @@ app.get('/review', async (req, res) => {
   return res.send('failed');
 });
 
-app.all('*', () => {
+app.all('*', (req, res) => {
   return res.send('🤠 ya lost partna?');
 });
 
