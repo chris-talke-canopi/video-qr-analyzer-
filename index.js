@@ -25,10 +25,10 @@ app.get('/review', async (req, res) => {
   // Create Temp Dir
   console.log(`[SERVER] Recieved job for '${email_address}' to review video.`)
   const filename_noext = filename.split('.')[0];
-  const localFilePath = `${__dirname}/tmp/${filename}`.replace(/\s@/gi,'_');
+  const localFilePath = `${__dirname}/tmp/${filename}`;
   if (!fs.existsSync(localFilePath)) {
     fs.mkdirSync(localFilePath);
-    }
+  }
   console.log(`[SERVER] Filepath '${localFilePath}' available for read/write.`)
 
   // Gets Video From Storage
@@ -37,12 +37,12 @@ app.get('/review', async (req, res) => {
   const blobServiceClient = await new BlobServiceClient(`https://${account}.blob.core.windows.net`, sharedKeyCredential);
   const containerClient = await blobServiceClient.getContainerClient(containerName);
   const blobClient = await containerClient.getBlobClient(filename);
-  await blobClient.downloadToFile(`${localFilePath}/${filename}`.replace(/\s@/gi,'_'));
+  await blobClient.downloadToFile(`${localFilePath}/${filename}`);
 
 
   // Dump frames from video
   console.log(`[SERVER] Dumping frames for video: '${filename}'.`)
-  const inputVideo = `${localFilePath}/${filename}`.replace(/\s@/gi,'_');
+  const inputVideo = `${localFilePath}/${filename}`;
   const outputDirectory = `${localFilePath}/`;
   const video = await ffmpeg(inputVideo);
   await video.fnExtractFrameToJPG(outputDirectory, {
@@ -51,7 +51,7 @@ app.get('/review', async (req, res) => {
   });
 
   // Review dumped frames for a QR Code
-  const images = fs.readdirSync(localFilePath).filter(f => f.includes('.jpg'));
+  const images = fs.readdirSync(localFilePath).filter(f => f.includes('.jpg') && f.includes(filename_noext));
   console.log(`[SERVER] Found '${images.length}' images...`);
   let results = [];
   for (let i = 0; i < images.length; i++) {
